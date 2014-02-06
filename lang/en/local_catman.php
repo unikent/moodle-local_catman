@@ -24,3 +24,6 @@
 
 $string['pluginname'] = 'Category Manager';
 
+$string['enable'] = 'Enable the category manager';
+$string['limit'] = 'Limits how many items are deleted per cron run';
+$string['catid'] = 'The ID of the removed category';

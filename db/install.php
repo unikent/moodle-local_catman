@@ -63,7 +63,7 @@ function xmldb_local_catman_install() {
 	// Set expiration times for all courses in this category.
 	foreach ($courses as $course) {
 		// Set an expiration time for this course.
-		$DB->insert_record("catman_dates", array(
+		$DB->insert_record("catman_expirations", array(
 			"courseid" => $course->id,
 			"deleted_date" => time(),
 			"expiration_time" => time() + 1209600 // 14 days
