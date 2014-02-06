@@ -17,56 +17,56 @@
 function xmldb_local_catman_install() {
     global $CFG, $DB;
 
-	$catid = get_config("local_catman", "catid");
+    $catid = get_config("local_catman", "catid");
 
     if ($catid === false) {
-    	// First try and find one.
-    	$category = $DB->get_record('course_categories', array(
-    		'idnumber' => 'kent_catman_removed'
-    	), 'id');
+        // First try and find one.
+        $category = $DB->get_record('course_categories', array(
+            'idnumber' => 'kent_catman_removed'
+        ), 'id');
 
-    	if (!$category) {
-    		// Try to find the old connect one.
-    		$category = $DB->get_record('course_categories', array(
-	    		'idnumber' => 'kent_connect_removed'
-	    	), 'id');
-    	}
+        if (!$category) {
+            // Try to find the old connect one.
+            $category = $DB->get_record('course_categories', array(
+                'idnumber' => 'kent_connect_removed'
+            ), 'id');
+        }
 
-    	if ($category) {
-			$catid = $category->id;
-	    	set_config("catid", $catid, "local_catman");
-    	}
+        if ($category) {
+            $catid = $category->id;
+            set_config("catid", $catid, "local_catman");
+        }
     }
 
     if ($catid === false) {
-    	// Still false, we will need to create one.
-		require_once("$CFG->libdir/coursecatlib.php");
+        // Still false, we will need to create one.
+        require_once("$CFG->libdir/coursecatlib.php");
 
-    	// Create a category.
-		$category = new \stdClass();
-		$category->parent = 0;
-		$category->idnumber = 'kent_catman_removed';
-		$category->name = 'Removed';
-		$category->description = 'Holding place for removed modules';
-		$category->sortorder = 999;
-		$category->visible = false;
-		$catid = \coursecat::create($category);
+        // Create a category.
+        $category = new \stdClass();
+        $category->parent = 0;
+        $category->idnumber = 'kent_catman_removed';
+        $category->name = 'Removed';
+        $category->description = 'Holding place for removed modules';
+        $category->sortorder = 999;
+        $category->visible = false;
+        $catid = \coursecat::create($category);
 
-    	set_config("catid", $catid, "local_catman");
+        set_config("catid", $catid, "local_catman");
     }
 
-	// Grab a list of courses in this category.
-	$courses = $DB->get_records('course', array(
-		'category' => $catid
-	), '', 'id');
+    // Grab a list of courses in this category.
+    $courses = $DB->get_records('course', array(
+        'category' => $catid
+    ), '', 'id');
 
-	// Set expiration times for all courses in this category.
-	foreach ($courses as $course) {
-		// Set an expiration time for this course.
-		$DB->insert_record("catman_expirations", array(
-			"courseid" => $course->id,
-			"deleted_date" => time(),
-			"expiration_time" => time() + 1209600 // 14 days
-		));
-	}
+    // Set expiration times for all courses in this category.
+    foreach ($courses as $course) {
+        // Set an expiration time for this course.
+        $DB->insert_record("catman_expirations", array(
+            "courseid" => $course->id,
+            "deleted_date" => time(),
+            "expiration_time" => time() + 1209600 // 14 days
+        ));
+    }
 }
