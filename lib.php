@@ -38,20 +38,34 @@ function local_catman_cron() {
 	$limit = isset($CFG->local_catman_limit) ? $CFG->local_catman_limit : 25;
 
 	// Get a list of courses that are due to expire.
-	$courses = $DB->get_records_sql("SELECT * FROM {catman_dates} WHERE expiration_time < :time", array(
+	$courses = $DB->get_records_sql("SELECT * FROM {catman_expirations} WHERE expiration_time < :time AND status = 0", array(
 		"time" => time()
 	), 0, $limit);
 
 	// Foreach course in the category.
-	foreach ($courses as $id) {
+	foreach ($courses as $course_exp) {
 		mtrace(" ");
-		mtrace("Deleting course $id....\n");
-		$course = $DB->get_record('course', array('id' => $id), '*', MUST_EXIST);
+		mtrace("Deleting course {$course_exp->id}....\n");
+
+		// Grab the course.
+		$course = $DB->get_record('course', array(
+			'id' => $course_exp->id
+		), '*', MUST_EXIST);
+
+		// Set it to errored so we dont keep re-trying this if it fails badly.
+		$course_exp->status = 2;
+		$DB->update_record('catman_expirations', $course_exp);
+
 		try {
+			// Attempt to delete the course.
 			@delete_course($course);
+			$course_exp->status = 1;
 		} catch (Exception $e) {
-			// TODO - set an error
+			$course_exp->status = 2;
 		}
+
+		$DB->update_record('catman_expirations', $course_exp);
+
 		mtrace(" ");
 	}
 }
