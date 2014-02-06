@@ -20,43 +20,78 @@ require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
 admin_externalpage_setup('reportcatmanreport', '', null, '', array(
-	'pagelayout' => 'report'
+    'pagelayout' => 'report'
 ));
 
 $PAGE->set_url('/local/catman/index.php');
 
+echo $OUTPUT->header();
+echo $OUTPUT->heading(get_string('pluginname', 'local_catman'));
+
+// Allow the user to delay a purge.
+$action = optional_param('action', false, PARAM_ALPHA);
+if ($action) {
+    $action_id = required_param('id', PARAM_INT);
+
+    switch($action) {
+        case 'delay':
+        	// Grab the course.
+			$course = $DB->get_record('catman_expirations', array(
+				'id' => $action_id
+			), 'id,expiration_time', MUST_EXIST);
+
+            // Delay the given course.
+            $DB->set_field('catman_expirations', 'expiration_time', $course->expiration_time + 1209600, array(
+                'id' => $action_id
+            ));
+
+            // Let the user know.
+            echo $OUTPUT->notification(get_string('delay_success', 'local_catman'));
+        break;
+
+        default:
+            // Do nothing.
+        break;
+    }
+}
+
 // Create a table.
 $table = new \html_table();
 $table->head = array(
-	get_string('course_id'),
-	get_string('course_name'),
-	get_string('date_deleted'),
-	get_string('date_scheduled'),
-	get_string('status')
+    get_string('course', 'local_catman'),
+    get_string('date_deleted', 'local_catman'),
+    get_string('date_scheduled', 'local_catman'),
+    get_string('status', 'local_catman'),
+    get_string('action', 'local_catman')
 );
 $table->data = array();
 
 // Get all the entries.
 $entries = $DB->get_records_sql("
-	SELECT ce.id, ce.courseid, ce.deleted_date, ce.expiration_time, ce.status, c.shortname 
-		FROM {catman_expirations} ce
-	INNER JOIN {course} c
-		ON c.id = ce.courseid
+    SELECT ce.id, ce.courseid, ce.deleted_date, ce.expiration_time, ce.status, c.shortname 
+        FROM {catman_expirations} ce
+    INNER JOIN {course} c
+        ON c.id = ce.courseid
+    ORDER BY ce.expiration_time DESC
 ");
 
 // Add all the entries to the table.
 foreach ($entries as $entry) {
-	$table->data[] = new \html_table_row(array(
-		$entry->courseid,
-		$entry->shortname,
-		$entry->deleted_date,
-		$entry->expiration_time,
-		get_string("status_{$entry->status}", 'local_catman')
-	));
+    $courseid_cell = new \html_table_cell(\html_writer::tag('a', $entry->shortname, array(
+        'href' => $CFG->wwwroot . '/course/view.php?id=' . $entry->courseid,
+        'target' => '_blank'
+    )));
+    $action_cell = new \html_table_cell(\html_writer::tag('a', get_string('delay', 'local_catman'), array(
+        'href' => $CFG->wwwroot . '/local/catman/index.php?action=delay&id=' . $entry->id
+    )));
+    $table->data[] = new \html_table_row(array(
+        $courseid_cell,
+        strftime("%d/%m/%Y %H:%M", $entry->deleted_date),
+        strftime("%d/%m/%Y %H:%M", $entry->expiration_time),
+        get_string("status_{$entry->status}", 'local_catman'),
+        $action_cell
+    ));
 }
-
-echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('pluginname', 'local_catman'));
 
 echo $OUTPUT->box_start('contents');
 echo \html_writer::table($table);

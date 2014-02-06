@@ -23,13 +23,15 @@
  */
 
 $string['pluginname'] = 'Category Manager';
+$string['plugindesc'] = 'The category manager was created by UKC to enable the automatic management of the \'removed\' category Moodle places deleted course into prior to purge.';
+
+$string['table_info'] = 'This is a list of courses that will shortly be deleted permanently from Moodle. If you have an issue with anything on the list please get in touch with a developer.';
 
 $string['enable'] = 'Enable the category manager';
 $string['limit'] = 'Limits how many items are deleted per cron run';
 $string['catid'] = 'The ID of the removed category';
 
-$string['course_id'] = 'Course ID';
-$string['course_name'] = 'Course Name';
+$string['course'] = 'Course';
 $string['date_deleted'] = 'Date Deleted';
 $string['date_scheduled'] = 'Purge Date';
 $string['status'] = 'Status';
@@ -37,3 +39,7 @@ $string['status'] = 'Status';
 $string['status_0'] = 'Scheduled';
 $string['status_1'] = 'Purged';
 $string['status_2'] = 'Errored';
+
+$string['delay'] = 'Delay';
+$string['delay_success'] = 'Course purge has been delayed by 2 weeks.';
+$string['action'] = 'Action';
