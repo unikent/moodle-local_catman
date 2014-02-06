@@ -27,3 +27,13 @@ $string['pluginname'] = 'Category Manager';
 $string['enable'] = 'Enable the category manager';
 $string['limit'] = 'Limits how many items are deleted per cron run';
 $string['catid'] = 'The ID of the removed category';
+
+$string['course_id'] = 'Course ID';
+$string['course_name'] = 'Course Name';
+$string['date_deleted'] = 'Date Deleted';
+$string['date_scheduled'] = 'Purge Date';
+$string['status'] = 'Status';
+
+$string['status_0'] = 'Scheduled';
+$string['status_1'] = 'Purged';
+$string['status_2'] = 'Errored';

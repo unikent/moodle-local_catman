@@ -3,6 +3,13 @@
 defined('MOODLE_INTERNAL') || die;
 
 if ($hassiteconfig) {
+	$ADMIN->add('reports', new admin_externalpage(
+		'reportcatmanreport',
+		get_string('pluginname', 'local_catman'),
+		"$CFG->wwwroot/local/catman/index.php",
+		'moodle/site:config'
+	));
+
 	$settings = new admin_settingpage('local_catman', get_string('pluginname', 'local_catman'));
 	$ADMIN->add('localplugins', $settings);
 
