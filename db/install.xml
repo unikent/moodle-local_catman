@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<XMLDB xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" PATH="local/catman/db" VERSION="20140206" COMMENT="XMLDB file for Moodle Removed Category Manager" xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
+	<TABLE NAME="catman_dates" COMMENT="Expiration date store for the category manager">
+		<FIELDS>
+			<FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+			<FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+			<FIELD NAME="deleted_date" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+			<FIELD NAME="expiration_time" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+		</FIELDS>
+		<KEYS>
+			<KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+		</KEYS>
+		<INDEXES>
+			<INDEX NAME="expiration_index" UNIQUE="false" FIELDS="expiration_time"/>
+		</INDEXES>
+	</TABLE>
+</XMLDB>
