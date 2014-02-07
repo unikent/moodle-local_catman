@@ -50,7 +50,8 @@ function xmldb_local_catman_install() {
         $category->description = 'Holding place for removed modules';
         $category->sortorder = 999;
         $category->visible = false;
-        $catid = \coursecat::create($category);
+        $obj = \coursecat::create($category);
+        $catid = $obj->id;
 
         set_config("catid", $catid, "local_catman");
     }
