@@ -17,7 +17,7 @@
 function xmldb_local_catman_install() {
     global $CFG, $DB;
 
-    $catid = get_config("local_catman", "catid");
+    $catid = isset($CFG->kent->rmcat_override) ? $CFG->kent->rmcat_override : get_config("local_catman", "catid");
 
     if ($catid === false) {
         // First try and find one.
