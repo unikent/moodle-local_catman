@@ -55,14 +55,17 @@ abstract class core {
     public static function get_category() {
     	$catid = get_config("local_catman", "catid");
 
-    	// If this isnt set, create a category (something needs one so lets not wait on the user).
-    	if ($catid === false) {
-    		$obj = self::create_category();
-    		set_config("catid", $obj->id, "local_catman");
-    		return $obj;
+    	// Try to use the category we have set if we have it set.
+    	if ($catid !== false && $catid != "0") {
+            $cat = \coursecat::get($catid, IGNORE_MISSING, true);
+            if ($cat) {
+                return $cat;
+            }
 	    }
 
-	    return \coursecat::get($catid, true);
+        $obj = self::create_category();
+        set_config("catid", $obj->id, "local_catman");
+        return $obj;
     }
 
     /**
