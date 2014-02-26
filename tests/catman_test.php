@@ -21,22 +21,6 @@ defined('MOODLE_INTERNAL') || die();
  */
 class local_catman_tests extends \advanced_testcase
 {
-    /**
-     * Tears down the fixture, for example, close a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown() {
-    	global $CFG;
-
-        require_once("$CFG->libdir/coursecatlib.php");
-
-    	// To cleanup, we want to delete the newly created category.
-    	// Moodle tests seem to fail (specifically, the category manager tests)
-    	// when there is an extra category. (Since 20140207 - Commit 9b62fec54a2cc6dc33cfe81710a93bf7f631b8fc)
-    	$category = \local_catman\core::get_category();
-    	$category->delete_full();
-    }
-
 	/**
 	 * Create a course, move it to the deleted category and see what happens.
 	 */
