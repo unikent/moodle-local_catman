@@ -55,7 +55,7 @@ abstract class core {
     public static function get_category() {
     	$catid = get_config("local_catman", "catid");
 
-    	// If this isnt set, create a category.
+    	// If this isnt set, create a category (something needs one so lets not wait on the user).
     	if ($catid === false) {
     		$obj = self::create_category();
     		set_config("catid", $obj->id, "local_catman");
