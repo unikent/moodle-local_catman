@@ -27,15 +27,18 @@
  * Our cron runs through 25 course deletions.
  */
 function local_catman_cron() {
-	global $CFG, $DB;
+	global $DB;
 
 	// Dont run if we are disabled.
-	if (!isset($CFG->local_catman_enable) || !$CFG->local_catman_enable) {
+	if (!get_config("local_catman", "enable")) {
 		return;
 	}
 
 	// What is the maximum number of courses we want to delete in one go?
-	$limit = isset($CFG->local_catman_limit) ? $CFG->local_catman_limit : 25;
+	$limit = get_config("local_catman", "limit");
+	if ($limit === false) {
+		$limit = 25;
+	}
 
 	// Get a list of courses that are due to expire.
 	$courses = $DB->get_records_sql("SELECT * FROM {catman_expirations} WHERE expiration_time < :time AND status = 0", array(
