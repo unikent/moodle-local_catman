@@ -53,7 +53,7 @@ class observers {
     	if ($DB->record_exists("catman_expirations", array("courseid" => $event->objectid))) {
     		if ($course->category !== $category->id) {
     			// Delete the record from catman expirations.
-    			$DB->delete_record("catman_expirations", array(
+    			$DB->delete_records("catman_expirations", array(
     				"courseid" => $event->objectid
     			));
     		}
