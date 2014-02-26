@@ -30,6 +30,7 @@ $string['table_info'] = 'This is a list of courses that will shortly be deleted 
 $string['enable'] = 'Enable the category manager';
 $string['limit'] = 'Limits how many items are deleted per cron run';
 $string['catid'] = 'The ID of the removed category';
+$string['period'] = 'Number of seconds between delete and purge';
 
 $string['course'] = 'Course';
 $string['date_deleted'] = 'Date Deleted';

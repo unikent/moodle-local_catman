@@ -35,4 +35,12 @@ if ($hassiteconfig) {
 		0,
 		PARAM_INT
 	));
+
+	$settings->add(new admin_setting_configtext(
+		'local_catman/period',
+		get_string('period', 'local_catman'),
+		'',
+		1209600,
+		PARAM_INT
+	));
 }
