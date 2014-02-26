@@ -31,6 +31,9 @@ class local_catman_tests extends \advanced_testcase
 
 		$this->resetAfterTest();
 
+        // Enable the plugin for testing.
+        set_config("enable", true, "local_catman");
+
 		// First we want to create a new category.
         $category = \local_catman\core::get_category();
 

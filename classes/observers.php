@@ -41,6 +41,11 @@ class observers {
     public static function course_updated(\core\event\course_updated $event) {
     	global $DB;
 
+        $enabled = get_config("local_catman", "enable");
+        if (!$enabled) {
+            return true;
+        }
+
 		// Grab the course.
 		$course = $DB->get_record('course', array(
 			"id" => $event->objectid
