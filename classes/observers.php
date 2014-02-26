@@ -41,14 +41,20 @@ class observers {
     public static function course_updated(\core\event\course_updated $event) {
     	global $DB;
 
+    	// Does the course exist in the expiration table already?
+    	if ($DB->record_exists("catman_expirations", array("courseid" => $event->objectid))) {
+    		return true;
+    	}
+
 		// Grab the course.
 		$course = $DB->get_record('course', array(
 			"id" => $event->objectid
 		), 'id,category');
 
+		// The ID of the deleted category is stored in config.
 		$catid = get_config("local_catman", "catid");
 
-		// Is this in the deleted category? If not, return now.
+		// Is this now in the deleted category?
 		if ($course->category == $catid) {
 			// Insert a record into the DB
 			$DB->insert_record("catman_expirations", array(
@@ -57,5 +63,7 @@ class observers {
 				"expiration_time" => time() + 1209600 // 14 days
 			));
 		}
+
+    	return true;
     }
 }
