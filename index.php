@@ -35,15 +35,8 @@ if ($action) {
 
     switch($action) {
         case 'delay':
-        	// Grab the course.
-			$course = $DB->get_record('catman_expirations', array(
-				'id' => $action_id
-			), 'id,expiration_time', MUST_EXIST);
-
-            // Delay the given course.
-            $DB->set_field('catman_expirations', 'expiration_time', $course->expiration_time + 1209600, array(
-                'id' => $action_id
-            ));
+            // Delay it.
+        	\local_catman\core::delay($action_id);
 
             // Let the user know.
             echo $OUTPUT->notification(get_string('delay_success', 'local_catman'));

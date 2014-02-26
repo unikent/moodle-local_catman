@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Observers
+ * Category manager
  *
  * @package    local_catman
  * @copyright  2014 University of Kent
@@ -41,26 +41,33 @@ class observers {
     public static function course_updated(\core\event\course_updated $event) {
     	global $DB;
 
-    	// Does the course exist in the expiration table already?
-    	if ($DB->record_exists("catman_expirations", array("courseid" => $event->objectid))) {
-    		return true;
-    	}
-
 		// Grab the course.
 		$course = $DB->get_record('course', array(
 			"id" => $event->objectid
 		), 'id,category');
 
 		// The ID of the deleted category is stored in config.
-		$catid = get_config("local_catman", "catid");
+		$category = core::get_category();
+
+    	// Does the course exist in the expiration table already?
+    	if ($DB->record_exists("catman_expirations", array("courseid" => $event->objectid))) {
+    		if ($course->category !== $category->id) {
+    			// Delete the record from catman expirations.
+    			$DB->delete_record("catman_expirations", array(
+    				"courseid" => $event->objectid
+    			));
+    		}
+
+			return true;
+    	}
 
 		// Is this now in the deleted category?
-		if ($course->category == $catid) {
+		if ($course->category === $category->id) {
 			// Insert a record into the DB
 			$DB->insert_record("catman_expirations", array(
 				"courseid" => $course->id,
 				"deleted_date" => time(),
-				"expiration_time" => time() + 1209600 // 14 days
+				"expiration_time" => time() + core::get_holding_period()
 			));
 		}
 
