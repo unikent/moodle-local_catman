@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for the categry manager
+ * Strings for the category manager
  *
  * @package    local_catman
  * @copyright  2014 University of Kent
