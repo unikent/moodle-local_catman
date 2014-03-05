@@ -48,11 +48,11 @@ function local_catman_cron() {
 	// Foreach course in the category.
 	foreach ($courses as $course_exp) {
 		mtrace(" ");
-		mtrace("Deleting course {$course_exp->id}....\n");
+		mtrace("Deleting course {$course_exp->courseid}....\n");
 
 		// Grab the course.
 		$course = $DB->get_record('course', array(
-			'id' => $course_exp->id
+			'id' => $course_exp->courseid
 		), '*', MUST_EXIST);
 
 		// Set it to errored so we dont keep re-trying this if it fails badly.
