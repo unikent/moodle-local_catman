@@ -31,12 +31,12 @@ require_once("$CFG->libdir/coursecatlib.php");
 /**
  * Catman core
  */
-abstract class core {
-
-	/**
-	 * Creates a category for the manager to use.
-	 */
-	private static function create_category() {
+abstract class core
+{
+    /**
+     * Creates a category for the manager to use.
+     */
+    private static function create_category() {
         // Create a category.
         $category = new \stdClass();
         $category->parent = 0;
@@ -47,21 +47,21 @@ abstract class core {
         $category->visible = false;
 
         return \coursecat::create($category);
-	}
+    }
 
     /**
      * Returns the category the category manager is supposed to use.
      */
     public static function get_category() {
-    	$catid = get_config("local_catman", "catid");
+        $catid = get_config("local_catman", "catid");
 
-    	// Try to use the category we have set if we have it set.
-    	if ($catid !== false && $catid != "0") {
+        // Try to use the category we have set if we have it set.
+        if ($catid !== false && $catid != "0") {
             $cat = \coursecat::get($catid, IGNORE_MISSING, true);
             if ($cat) {
                 return $cat;
             }
-	    }
+        }
 
         $obj = self::create_category();
         set_config("catid", $obj->id, "local_catman");
@@ -72,24 +72,24 @@ abstract class core {
      * Get the period of holding.
      */
     public static function get_holding_period() {
-		$period = get_config("local_catman", "period");
-		if ($period === false) {
-			$period = 1209600; // 14 day default.
-		}
+        $period = get_config("local_catman", "period");
+        if ($period === false) {
+            $period = 1209600; // 14 day default.
+        }
 
-		return $period;
+        return $period;
     }
 
     /**
      * Delay the given course.
      */
     public static function delay($id) {
-    	global $DB;
+        global $DB;
 
-    	// Grab the course.
-		$course = $DB->get_record('catman_expirations', array(
-			'id' => $id
-		), 'id,expiration_time', MUST_EXIST);
+        // Grab the course.
+        $course = $DB->get_record('catman_expirations', array(
+            'id' => $id
+        ), 'id,expiration_time', MUST_EXIST);
 
         // Delay the given course.
         $DB->set_field('catman_expirations', 'expiration_time', $course->expiration_time + self::get_holding_period(), array(

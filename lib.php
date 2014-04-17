@@ -22,53 +22,54 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die;
 
 /**
  * Our cron runs through 25 course deletions.
  */
 function local_catman_cron() {
-	global $DB;
+    global $DB;
 
-	// Dont run if we are disabled.
-	if (!get_config("local_catman", "enable")) {
-		return;
-	}
+    // Dont run if we are disabled.
+    if (!get_config("local_catman", "enable")) {
+        return;
+    }
 
-	// What is the maximum number of courses we want to delete in one go?
-	$limit = get_config("local_catman", "limit");
-	if ($limit === false) {
-		$limit = 25;
-	}
+    // What is the maximum number of courses we want to delete in one go?
+    $limit = get_config("local_catman", "limit");
+    if ($limit === false) {
+        $limit = 25;
+    }
 
-	// Get a list of courses that are due to expire.
-	$courses = $DB->get_records_sql("SELECT * FROM {catman_expirations} WHERE expiration_time < :time AND status = 0", array(
-		"time" => time()
-	), 0, $limit);
+    // Get a list of courses that are due to expire.
+    $courses = $DB->get_records_sql("SELECT * FROM {catman_expirations} WHERE expiration_time < :time AND status = 0", array(
+        "time" => time()
+    ), 0, $limit);
 
-	// Foreach course in the category.
-	foreach ($courses as $course_exp) {
-		mtrace(" ");
-		mtrace("Deleting course {$course_exp->courseid}....\n");
+    // Foreach course in the category.
+    foreach ($courses as $course_exp) {
+        mtrace(" ");
+        mtrace("Deleting course {$course_exp->courseid}....\n");
 
-		// Grab the course.
-		$course = $DB->get_record('course', array(
-			'id' => $course_exp->courseid
-		), '*', MUST_EXIST);
+        // Grab the course.
+        $course = $DB->get_record('course', array(
+            'id' => $course_exp->courseid
+        ), '*', MUST_EXIST);
 
-		// Set it to errored so we dont keep re-trying this if it fails badly.
-		$course_exp->status = 2;
-		$DB->update_record('catman_expirations', $course_exp);
+        // Set it to errored so we dont keep re-trying this if it fails badly.
+        $course_exp->status = 2;
+        $DB->update_record('catman_expirations', $course_exp);
 
-		try {
-			// Attempt to delete the course.
-			@delete_course($course);
-			$course_exp->status = 1;
-		} catch (Exception $e) {
-			$course_exp->status = 2;
-		}
+        try {
+            // Attempt to delete the course.
+            @delete_course($course);
+            $course_exp->status = 1;
+        } catch (Exception $e) {
+            $course_exp->status = 2;
+        }
 
-		$DB->update_record('catman_expirations', $course_exp);
+        $DB->update_record('catman_expirations', $course_exp);
 
-		mtrace(" ");
-	}
+        mtrace(" ");
+    }
 }

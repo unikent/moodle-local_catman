@@ -29,8 +29,8 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Catman observers
  */
-class observers {
-
+class observers
+{
     /**
      * Triggered when 'course_updated' event is triggered.
      * Adds a course expiration date if the course has moved category.
@@ -39,43 +39,43 @@ class observers {
      * @return unknown
      */
     public static function course_updated(\core\event\course_updated $event) {
-    	global $DB;
+        global $DB;
 
         $enabled = get_config("local_catman", "enable");
         if (!$enabled) {
             return true;
         }
 
-		// Grab the course.
-		$course = $DB->get_record('course', array(
-			"id" => $event->objectid
-		), 'id,category');
+        // Grab the course.
+        $course = $DB->get_record('course', array(
+            "id" => $event->objectid
+        ), 'id,category');
 
-		// The ID of the deleted category is stored in config.
-		$category = core::get_category();
+        // The ID of the deleted category is stored in config.
+        $category = core::get_category();
 
-    	// Does the course exist in the expiration table already?
-    	if ($DB->record_exists("catman_expirations", array("courseid" => $event->objectid))) {
-    		if ($course->category !== $category->id) {
-    			// Delete the record from catman expirations.
-    			$DB->delete_records("catman_expirations", array(
-    				"courseid" => $event->objectid
-    			));
-    		}
+        // Does the course exist in the expiration table already?
+        if ($DB->record_exists("catman_expirations", array("courseid" => $event->objectid))) {
+            if ($course->category !== $category->id) {
+                // Delete the record from catman expirations.
+                $DB->delete_records("catman_expirations", array(
+                    "courseid" => $event->objectid
+                ));
+            }
 
-			return true;
-    	}
+            return true;
+        }
 
-		// Is this now in the deleted category?
-		if ($course->category === $category->id) {
-			// Insert a record into the DB
-			$DB->insert_record("catman_expirations", array(
-				"courseid" => $course->id,
-				"deleted_date" => time(),
-				"expiration_time" => time() + core::get_holding_period()
-			));
-		}
+        // Is this now in the deleted category?
+        if ($course->category === $category->id) {
+            // Insert a record into the DB
+            $DB->insert_record("catman_expirations", array(
+                "courseid" => $course->id,
+                "deleted_date" => time(),
+                "expiration_time" => time() + core::get_holding_period()
+            ));
+        }
 
-    	return true;
+        return true;
     }
 }

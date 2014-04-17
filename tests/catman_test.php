@@ -21,20 +21,20 @@ defined('MOODLE_INTERNAL') || die();
  */
 class local_catman_tests extends \advanced_testcase
 {
-	/**
-	 * Create a course, move it to the deleted category and see what happens.
-	 */
-	public function test_observer() {
+    /**
+     * Create a course, move it to the deleted category and see what happens.
+     */
+    public function test_observer() {
         global $CFG, $DB;
 
         require_once($CFG->dirroot . "/course/lib.php");
 
-		$this->resetAfterTest();
+        $this->resetAfterTest();
 
         // Enable the plugin for testing.
         set_config("enable", true, "local_catman");
 
-		// First we want to create a new category.
+        // First we want to create a new category.
         $category = \local_catman\core::get_category();
 
         // Now create some courses.
@@ -70,5 +70,5 @@ class local_catman_tests extends \advanced_testcase
         $this->assertTrue($DB->record_exists('catman_expirations', array(
             "courseid" => $c1->id
         )));
-	}
+    }
 }
