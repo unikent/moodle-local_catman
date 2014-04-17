@@ -36,7 +36,7 @@ if ($action) {
     switch($action) {
         case 'delay':
             // Delay it.
-        	\local_catman\core::delay($action_id);
+            \local_catman\core::delay($action_id);
 
             // Let the user know.
             echo $OUTPUT->notification(get_string('delay_success', 'local_catman'));
