@@ -28,3 +28,7 @@ $plugin->component = 'local_catman'; // Full name of the plugin (used for diagno
 $plugin->version   = 2014022600;     // The current plugin version (Date: YYYYMMDDXX).
 $plugin->requires  = 2013110500;     // Requires this Moodle version.
 $plugin->cron      = 60;
+
+$plugin->dependencies = array(
+    'local_hipchat' => 2014042300
+);
