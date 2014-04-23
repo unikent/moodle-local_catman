@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$module->component = 'local_catman'; // Full name of the plugin (used for diagnostics).
-$module->version   = 2014022600;     // The current module version (Date: YYYYMMDDXX).
-$module->requires  = 2013110500;     // Requires this Moodle version.
-$module->cron      = 60;
+$plugin->component = 'local_catman'; // Full name of the plugin (used for diagnostics).
+$plugin->version   = 2014022600;     // The current plugin version (Date: YYYYMMDDXX).
+$plugin->requires  = 2013110500;     // Requires this Moodle version.
+$plugin->cron      = 60;
