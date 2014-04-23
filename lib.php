@@ -59,7 +59,7 @@ function local_catman_cron() {
         // Grab the course.
         $course = $DB->get_record('course', array(
             'id' => $course_exp->courseid
-        ), '*', MUST_EXIST);
+        ), '*');
 
         // Set it to errored so we dont keep re-trying this if it fails badly.
         $course_exp->status = 2;
@@ -67,7 +67,10 @@ function local_catman_cron() {
 
         try {
             // Attempt to delete the course.
-            @delete_course($course);
+            if ($course !== false) {
+                @delete_course($course);
+            }
+
             $course_exp->status = 1;
         } catch (Exception $e) {
             $course_exp->status = 2;
