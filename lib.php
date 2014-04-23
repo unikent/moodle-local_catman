@@ -51,7 +51,7 @@ function local_catman_cron() {
         mtrace(" ");
         mtrace("Deleting course {$course_exp->courseid}....\n");
 
-        $hipchat = get_config("local_hipchat", "roomid");
+        $hipchat = get_config("local_catman", "enable_hipchat");
         if ($hipchat !== false) {
             \local_hipchat\Message::send("I am deleting this course: {$course_exp->courseid}! Sorry if it is the wrong one :'(", "red", false, "text", "CatMan");
         }
