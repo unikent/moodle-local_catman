@@ -68,7 +68,7 @@ class observers
 
         // Is this now in the deleted category?
         if ($course->category === $category->id) {
-            // Insert a record into the DB
+            // Insert a record into the DB.
             $DB->insert_record("catman_expirations", array(
                 "courseid" => $course->id,
                 "deleted_date" => time(),

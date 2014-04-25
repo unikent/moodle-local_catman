@@ -19,12 +19,12 @@ define('CLI_SCRIPT', true);
 require_once(dirname(__FILE__) . '/../../../config.php');
 require_once(dirname(__FILE__) . '/lib.php');
 
-// We need admin
+// We need admin.
 \core\session\manager::set_user(get_admin());
 
 $CFG->forced_plugin_settings['local_catman'] = array(
-	'enable' => 1,
-	'limit' => 999999
+    'enable' => 1,
+    'limit' => 999999
 );
 
 local_catman_cron();

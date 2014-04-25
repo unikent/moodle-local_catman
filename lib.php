@@ -42,30 +42,31 @@ function local_catman_cron() {
     }
 
     // Get a list of courses that are due to expire.
-    $courses = $DB->get_records_sql("SELECT * FROM {catman_expirations} WHERE expiration_time < :time AND status = 0", array(
+    $expirations = $DB->get_records_sql("SELECT * FROM {catman_expirations} WHERE expiration_time < :time AND status = 0", array(
         "time" => time()
     ), 0, $limit);
 
     // Foreach course in the category.
-    foreach ($courses as $course_exp) {
+    foreach ($expirations as $expiration) {
         mtrace(" ");
-        mtrace("Deleting course {$course_exp->courseid}....\n");
+        mtrace("Deleting course {$expiration->courseid}....\n");
 
         // Grab the course.
         $course = $DB->get_record('course', array(
-            'id' => $course_exp->courseid
+            'id' => $expiration->courseid
         ));
 
         $hipchat = get_config("local_catman", "enable_hipchat");
         if ($hipchat != false) {
             if ($course !== false) {
-                \local_hipchat\Message::send("Deleting '{$course->shortname}' ({$course_exp->courseid})...", "red", false, "text", "CatMan");
+                $msg = "Deleting '{$course->shortname}' ({$expiration->courseid})...";
+                \local_hipchat\Message::send($msg, "red", false, "text", "CatMan");
             }
         }
 
         // Set it to errored so we dont keep re-trying this if it fails badly.
-        $course_exp->status = 2;
-        $DB->update_record('catman_expirations', $course_exp);
+        $expiration->status = 2;
+        $DB->update_record('catman_expirations', $expiration);
 
         try {
             // Attempt to delete the course.
@@ -73,12 +74,12 @@ function local_catman_cron() {
                 @delete_course($course);
             }
 
-            $course_exp->status = 1;
+            $expiration->status = 1;
         } catch (Exception $e) {
-            $course_exp->status = 2;
+            $expiration->status = 2;
         }
 
-        $DB->update_record('catman_expirations', $course_exp);
+        $DB->update_record('catman_expirations', $expiration);
 
         mtrace(" ");
     }
