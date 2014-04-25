@@ -31,12 +31,12 @@ echo $OUTPUT->heading(get_string('pluginname', 'local_catman'));
 // Allow the user to delay a purge.
 $action = optional_param('action', false, PARAM_ALPHA);
 if ($action) {
-    $action_id = required_param('id', PARAM_INT);
+    $id = required_param('id', PARAM_INT);
 
     switch($action) {
         case 'delay':
             // Delay it.
-            \local_catman\core::delay($action_id);
+            \local_catman\core::delay($id);
 
             // Let the user know.
             echo $OUTPUT->notification(get_string('delay_success', 'local_catman'));
@@ -61,7 +61,7 @@ $table->data = array();
 
 // Get all the entries.
 $entries = $DB->get_records_sql("
-    SELECT ce.id, ce.courseid, ce.deleted_date, ce.expiration_time, ce.status, c.shortname 
+    SELECT ce.id, ce.courseid, ce.deleted_date, ce.expiration_time, ce.status, c.shortname
         FROM {catman_expirations} ce
     INNER JOIN {course} c
         ON c.id = ce.courseid
@@ -70,19 +70,19 @@ $entries = $DB->get_records_sql("
 
 // Add all the entries to the table.
 foreach ($entries as $entry) {
-    $courseid_cell = new \html_table_cell(\html_writer::tag('a', $entry->shortname, array(
+    $courselink = new \html_table_cell(\html_writer::tag('a', $entry->shortname, array(
         'href' => $CFG->wwwroot . '/course/view.php?id=' . $entry->courseid,
         'target' => '_blank'
     )));
-    $action_cell = new \html_table_cell(\html_writer::tag('a', get_string('delay', 'local_catman'), array(
+    $actionlink = new \html_table_cell(\html_writer::tag('a', get_string('delay', 'local_catman'), array(
         'href' => $CFG->wwwroot . '/local/catman/index.php?action=delay&id=' . $entry->id
     )));
     $table->data[] = new \html_table_row(array(
-        $courseid_cell,
+        $courselink,
         strftime("%d/%m/%Y %H:%M", $entry->deleted_date),
         strftime("%d/%m/%Y %H:%M", $entry->expiration_time),
         get_string("status_{$entry->status}", 'local_catman'),
-        $action_cell
+        $actionlink
     ));
 }
 
