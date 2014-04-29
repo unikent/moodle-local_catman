@@ -71,4 +71,50 @@ class local_catman_tests extends \advanced_testcase
             "courseid" => $c1->id
         )));
     }
+
+    /**
+     * Test the cron.
+     */
+    public function test_cron() {
+        global $CFG, $DB;
+
+        require_once($CFG->dirroot . "/course/lib.php");
+        require_once($CFG->dirroot . "/local/catman/lib.php");
+
+        $this->resetAfterTest();
+
+        // Enable the plugin for testing.
+        set_config("enable", true, "local_catman");
+        set_config("period", 1, "local_catman");
+
+        // First we want to create a new category.
+        $category = \local_catman\core::get_category();
+
+        // Now create some courses.
+        $c1 = $this->getDataGenerator()->create_course();
+        $c2 = $this->getDataGenerator()->create_course();
+        $c3 = $this->getDataGenerator()->create_course();
+
+        // Move c2 and c3 into the deleted category.
+        $this->assertTrue(move_courses(array($c2->id, $c3->id), $category->id));
+
+        // Sleep.
+        sleep(2);
+
+        // Run cron.
+        ob_start();
+        local_catman_cron();
+        ob_get_clean();
+
+        // What happened?
+        $this->assertTrue($DB->record_exists("course", array(
+            "id" => $c1->id
+        )));
+        $this->assertFalse($DB->record_exists("course", array(
+            "id" => $c2->id
+        )));
+        $this->assertFalse($DB->record_exists("course", array(
+            "id" => $c3->id
+        )));
+    }
 }
