@@ -46,33 +46,39 @@ function local_catman_cron() {
         "time" => time()
     ), 0, $limit);
 
+    // Grab the removed category.
+    $category = \local_catman\core::get_category();
+
     // Foreach course in the category.
     foreach ($expirations as $expiration) {
         mtrace(" ");
         mtrace("Deleting course {$expiration->courseid}....\n");
 
-        // Grab the course.
-        $course = $DB->get_record('course', array(
-            'id' => $expiration->courseid
-        ));
-
-        $hipchat = get_config("local_catman", "enable_hipchat");
-        if ($hipchat != false) {
-            if ($course !== false) {
-                $msg = "Deleting '{$course->shortname}' ({$expiration->courseid})...";
-                \local_hipchat\Message::send($msg, "red", false, "text", "CatMan");
-            }
-        }
-
         // Set it to errored so we dont keep re-trying this if it fails badly.
         $expiration->status = 2;
         $DB->update_record('catman_expirations', $expiration);
 
+        // Grab the course.
+        $course = $DB->get_record('course', array(
+            'id' => $expiration->courseid,
+            'category' => $category->id
+        ));
+
+        // Did we succeed?
+        if ($course === false) {
+            continue;
+        }
+
+        // Notify HipChat.
+        $hipchat = get_config("local_catman", "enable_hipchat");
+        if ($hipchat != false) {
+            $msg = "Deleting '{$course->shortname}' ({$course->id})...";
+            \local_hipchat\Message::send($msg, "purple", false, "text", "CatMan");
+        }
+
         try {
             // Attempt to delete the course.
-            if ($course !== false) {
-                @delete_course($course);
-            }
+            @delete_course($course);
 
             $expiration->status = 1;
         } catch (Exception $e) {
