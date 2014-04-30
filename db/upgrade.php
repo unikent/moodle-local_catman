@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die;
  * @param int $oldversion the version we are upgrading from
  * @return bool always true
  */
-function xmldb_catman_upgrade($oldversion) {
+function xmldb_local_catman_upgrade($oldversion) {
     global $CFG, $DB;
 
     if ($oldversion < 2014023000) {
@@ -38,7 +38,7 @@ function xmldb_catman_upgrade($oldversion) {
         // still exist and set them to errored.
 
         $entries = $DB->get_records_sql("
-            SELECT ce.*
+            SELECT ce.id
                 FROM {catman_expirations} ce
             INNER JOIN {course} c
                 ON c.id = ce.courseid
@@ -50,6 +50,6 @@ function xmldb_catman_upgrade($oldversion) {
             $DB->update_record('catman_expirations', $entry, true);
         }
 
-        upgrade_mod_savepoint(true, 2014023000, 'catman');
+        upgrade_plugin_savepoint(true, 2014023000, 'local', 'catman');
     }
 }
