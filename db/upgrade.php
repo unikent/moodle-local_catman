@@ -15,16 +15,41 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
+ * Upgrade code
  *
  * @package    local_catman
  * @copyright  2014 University of Kent
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-$plugin->component = 'local_catman'; // Full name of the plugin (used for diagnostics).
-$plugin->version   = 2014023000;     // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2013110500;     // Requires this Moodle version.
-$plugin->cron      = 60;
+/**
+ * Catman upgrade task
+ *
+ * @param int $oldversion the version we are upgrading from
+ * @return bool always true
+ */
+function xmldb_catman_upgrade($oldversion) {
+    global $CFG, $DB;
+
+    if ($oldversion < 2014023000) {
+        // Check all courses that "have" been purged, that actually
+        // still exist and set them to errored.
+
+        $entries = $DB->get_records_sql("
+            SELECT ce.*
+                FROM {catman_expirations} ce
+            INNER JOIN {course} c
+                ON c.id = ce.courseid
+            WHERE ce.status=1
+        ");
+
+        foreach ($entries as $entry) {
+            $entry->status = 2;
+            $DB->update_record('catman_expirations', $entry, true);
+        }
+
+        upgrade_mod_savepoint(true, 2014023000, 'catman');
+    }
+}
