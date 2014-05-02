@@ -78,10 +78,16 @@ function local_catman_cron() {
 
         try {
             // Attempt to delete the course.
-            @delete_course($course);
+            delete_course($course);
 
             $expiration->status = 1;
         } catch (Exception $e) {
+            $expiration->status = 2;
+        }
+
+        // Does the course exist?
+        // If it does, it didnt work.
+        if ($DB->record_exists('course', array('id' => $expiration->courseid))) {
             $expiration->status = 2;
         }
 

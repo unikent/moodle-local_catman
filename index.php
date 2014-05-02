@@ -61,9 +61,9 @@ $table->data = array();
 
 // Get all the entries.
 $entries = $DB->get_records_sql("
-    SELECT ce.id, ce.courseid, ce.deleted_date, ce.expiration_time, ce.status, c.shortname
+    SELECT ce.id, ce.courseid, ce.deleted_date, ce.expiration_time, ce.status, COALESCE(c.shortname, 'Deleted') as shortname
         FROM {catman_expirations} ce
-    INNER JOIN {course} c
+    LEFT OUTER JOIN {course} c
         ON c.id = ce.courseid
     ORDER BY ce.expiration_time DESC
 ");
