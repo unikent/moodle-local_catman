@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die;
 function xmldb_local_catman_upgrade($oldversion) {
     global $CFG, $DB;
 
-    if ($oldversion < 2014023000) {
+    if ($oldversion < 2014050200) {
         // Check all courses that "have" been purged, that actually
         // still exist and set them to errored.
 
@@ -50,6 +50,6 @@ function xmldb_local_catman_upgrade($oldversion) {
             $DB->update_record('catman_expirations', $entry, true);
         }
 
-        upgrade_plugin_savepoint(true, 2014023000, 'local', 'catman');
+        upgrade_plugin_savepoint(true, 2014050200, 'local', 'catman');
     }
 }
