@@ -73,7 +73,7 @@ function local_catman_cron() {
         $hipchat = get_config("local_catman", "enable_hipchat");
         if ($hipchat != false) {
             $msg = "Deleting '{$course->shortname}' ({$course->id})...";
-            \local_hipchat\Message::send($msg, "purple", false, "text", "CatMan");
+            \local_hipchat\Message::send($msg, "purple", "text", "CatMan");
         }
 
         try {
