@@ -34,7 +34,7 @@ $string['period'] = 'Number of seconds between delete and purge';
 
 $string['course'] = 'Course';
 $string['date_deleted'] = 'Date Deleted';
-$string['date_scheduled'] = 'Purge Date';
+$string['date_scheduled'] = 'Purge Due Date';
 $string['status'] = 'Status';
 
 $string['status_0'] = 'Scheduled';
