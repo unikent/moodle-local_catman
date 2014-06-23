@@ -52,4 +52,6 @@ function xmldb_local_catman_upgrade($oldversion) {
 
         upgrade_plugin_savepoint(true, 2014050200, 'local', 'catman');
     }
+
+    return true;
 }
