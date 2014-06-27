@@ -59,7 +59,7 @@ function xmldb_local_catman_upgrade($oldversion) {
         $category = \local_catman\core::get_category();
 
         $courses = $DB->get_records('course', array(
-            'category' => $category
+            'category' => $category->id
         ));
 
         foreach ($courses as $course) {
