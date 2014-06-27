@@ -49,7 +49,7 @@ class observers
         // Grab the course.
         $course = $DB->get_record('course', array(
             "id" => $event->objectid
-        ), 'id,category');
+        ));
 
         // The ID of the deleted category is stored in config.
         $category = core::get_category();
@@ -68,6 +68,9 @@ class observers
 
         // Is this now in the deleted category?
         if ($course->category === $category->id) {
+            // Delete enrolments.
+            enrol_course_delete($course);
+
             // Insert a record into the DB.
             $DB->insert_record("catman_expirations", array(
                 "courseid" => $course->id,
