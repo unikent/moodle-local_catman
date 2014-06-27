@@ -53,5 +53,21 @@ function xmldb_local_catman_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2014050200, 'local', 'catman');
     }
 
+    if ($oldversion < 2014062700) {
+        require_once($CFG->libdir . '/enrollib.php');
+
+        $category = \local_catman\core::get_category();
+
+        $courses = $DB->get_records('course', array(
+            'category' => $category
+        ));
+
+        foreach ($courses as $course) {
+            enrol_course_delete($course);
+        }
+
+        upgrade_plugin_savepoint(true, 2014062700, 'local', 'catman');
+    }
+
     return true;
 }
