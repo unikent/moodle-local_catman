@@ -69,7 +69,7 @@ class observers
         // Is this now in the deleted category?
         if ($course->category === $category->id) {
             // Delete enrolments.
-            //enrol_course_delete($course);
+            enrol_course_delete($course);
 
             // Insert a record into the DB.
             $DB->insert_record("catman_expirations", array(
