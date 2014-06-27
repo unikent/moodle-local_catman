@@ -117,4 +117,44 @@ class local_catman_tests extends \advanced_testcase
             "id" => $c3->id
         )));
     }
+
+    /**
+     * Test enrolment deletion observer.
+     */
+    public function test_enrolments() {
+        global $CFG, $DB;
+
+        require_once($CFG->dirroot . "/course/lib.php");
+
+        $this->resetAfterTest();
+
+        // Enable the plugin for testing.
+        set_config("enable", true, "local_catman");
+
+        // First we want to create a new category.
+        $category = \local_catman\core::get_category();
+
+        // Get some roles.
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+
+        // Now create some courses.
+        $c1 = $this->getDataGenerator()->create_course();
+        $c1ctx = context_course::instance($c1->id);
+
+        // Enrol users.
+        $u1 = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($u1->id, $c1->id, $studentrole->id);
+        $this->assertCount(1, get_enrolled_users($c1ctx));
+
+        $u2 = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($u2->id, $c1->id, $teacherrole->id);
+        $this->assertCount(2, get_enrolled_users($c1ctx));
+
+        // Delete it.
+        $this->assertTrue(move_courses(array($c1->id), $category->id));
+
+        // Check!
+        $this->assertCount(0, get_enrolled_users($c1ctx));
+    }
 }
