@@ -39,7 +39,7 @@ class observers
      * @return unknown
      */
     public static function course_updated(\core\event\course_updated $event) {
-        global $DB;
+        global $CFG, $DB;
 
         $enabled = get_config("local_catman", "enable");
         if (!$enabled) {
@@ -68,6 +68,8 @@ class observers
 
         // Is this now in the deleted category?
         if ($course->category === $category->id) {
+            require_once($CFG->libdir . '/enrollib.php');
+
             // Delete enrolments.
             enrol_course_delete($course);
 
