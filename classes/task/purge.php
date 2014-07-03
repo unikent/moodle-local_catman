@@ -63,6 +63,7 @@ class purge extends \core\task\scheduled_task
                 'id' => $expiration->courseid,
                 'category' => $category->id
             ));
+            $coursectx = \context_course::instance($course->id);
 
             // Did we succeed?
             if ($course === false) {
@@ -89,7 +90,7 @@ class purge extends \core\task\scheduled_task
             if ($expiration->status = 1) {
                 $event = \local_catman\event\course_purged::create(array(
                     'objectid' => $expiration->courseid,
-                    'context' => \context_course::instance($expiration->courseid),
+                    'context' => $coursectx,
                     'other' => array(
                         'shortname' => $course->shortname
                     )
