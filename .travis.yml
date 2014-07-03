@@ -1,0 +1,25 @@
+language: php
+services:
+  - mysql
+php:
+  - "5.5"
+matrix:
+  fast_finish: true
+cache:
+  directories:
+  - vendor/
+before_install:
+  - composer self-update
+before_script:
+  - mkdir /tmp/submod
+  - mv ./* /tmp/submod
+  - rm -rf ./*
+  - git clone https://github.com/moodle/moodle.git --depth=1 -b MOODLE_27_STABLE .
+  - mv /tmp/submod local/catman
+  - if [ ! -d "vendor/phpunit" ]; then composer install --dev; fi
+  - mv config-dist.php config.php
+  - mkdir -m777 $HOME/moodledata
+  - mysql -e 'create database moodle default character set UTF8 collate UTF8_bin;'
+  - sh -c "sed -i -e s/example.com/localhost/ -e s%/home/example%$HOME% -e 's%pgsql%mysqli' -e 's%username%root' -e 's%password%' -e 's%\(\$CFG.*phpu\)%\n\1%' config.php"
+  - php admin/tool/phpunit/cli/init.php
+script: php vendor/bin/phpunit local_catman_tests local/catman/tests/catman_test.php
