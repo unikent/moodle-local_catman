@@ -79,7 +79,6 @@ class local_catman_tests extends \advanced_testcase
         global $CFG, $DB;
 
         require_once($CFG->dirroot . "/course/lib.php");
-        require_once($CFG->dirroot . "/local/catman/lib.php");
 
         $this->resetAfterTest();
 
