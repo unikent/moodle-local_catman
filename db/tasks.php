@@ -14,17 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-define('CLI_SCRIPT', true);
+/**
+ * Category manager
+ *
+ * @package    local_catman
+ * @copyright  2014 University of Kent
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-require_once(dirname(__FILE__) . '/../../../config.php');
-require_once(dirname(__FILE__) . '/lib.php');
-
-// We need admin.
-\core\session\manager::set_user(get_admin());
-
-$CFG->forced_plugin_settings['local_catman'] = array(
-    'enable' => 1,
-    'limit' => 999999
+$tasks = array(
+    array(
+        'classname' => 'local_catman\task\purge',
+        'blocking' => 0,
+        'minute' => '*/5',
+        'hour' => '*',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*'
+    )
 );
-
-local_catman_cron();
