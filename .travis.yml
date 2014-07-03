@@ -11,9 +11,11 @@ cache:
 before_install:
   - composer self-update
 before_script:
+  - pwd
   - mkdir /tmp/submod
   - mv ./* /tmp/submod
-  - rm -rf ./*
+  - mkdir moodle
+  - cd moodle
   - git clone https://github.com/moodle/moodle.git --depth=1 -b MOODLE_27_STABLE .
   - mv /tmp/submod local/catman
   - if [ ! -d "vendor/phpunit" ]; then composer install --dev; fi
