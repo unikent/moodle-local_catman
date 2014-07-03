@@ -103,11 +103,7 @@ class local_catman_tests extends \advanced_testcase
         // Run task.
         ob_start();
         $task = new \local_catman\task\purge();
-        $task = \core\task\manager::queue_adhoc_task($task);
-        $task = \core\task\manager::get_next_adhoc_task(time());
-        $this->assertNotNull($task);
         $task->execute();
-        \core\task\manager::adhoc_task_complete($task);
         ob_get_clean();
 
         // What happened?
