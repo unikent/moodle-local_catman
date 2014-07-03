@@ -79,7 +79,6 @@ class local_catman_tests extends \advanced_testcase
         global $CFG, $DB;
 
         require_once($CFG->dirroot . "/course/lib.php");
-        require_once($CFG->dirroot . "/local/catman/lib.php");
 
         $this->resetAfterTest();
 
@@ -101,9 +100,10 @@ class local_catman_tests extends \advanced_testcase
         // Sleep.
         sleep(2);
 
-        // Run cron.
+        // Run task.
         ob_start();
-        local_catman_cron();
+        $task = new \local_catman\task\purge();
+        $task->execute();
         ob_get_clean();
 
         // What happened?
