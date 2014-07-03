@@ -101,9 +101,14 @@ class local_catman_tests extends \advanced_testcase
         // Sleep.
         sleep(2);
 
-        // Run cron.
+        // Run task.
         ob_start();
-        local_catman_cron();
+        $task = new \local_catman\task\purge();
+        $task = \core\task\manager::queue_adhoc_task($task);
+        $task = \core\task\manager::get_next_adhoc_task(time());
+        $this->assertNotNull($task);
+        $task->execute();
+        \core\task\manager::adhoc_task_complete($task);
         ob_get_clean();
 
         // What happened?
