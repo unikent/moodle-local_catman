@@ -69,13 +69,6 @@ class purge extends \core\task\scheduled_task
                 continue;
             }
 
-            // Notify HipChat.
-            $hipchat = get_config("local_catman", "enable_hipchat");
-            if ($hipchat != false) {
-                $msg = "Deleting '{$course->shortname}' ({$course->id})...";
-                \local_hipchat\Message::send($msg, "purple", "text", "CatMan");
-            }
-
             try {
                 // Attempt to delete the course.
                 delete_course($course);
@@ -90,6 +83,18 @@ class purge extends \core\task\scheduled_task
             // If it does, it didnt work.
             if ($DB->record_exists('course', array('id' => $expiration->courseid))) {
                 $expiration->status = 2;
+            }
+
+            // Raise an event.
+            if ($expiration->status = 1) {
+                $event = \local_catman\event\course_purged::create(array(
+                    'objectid' => $expiration->courseid,
+                    'context' => \context_course::instance($expiration->courseid),
+                    'other' => array(
+                        'shortname' => $course->shortname
+                    )
+                ));
+                $event->trigger();
             }
 
             $DB->update_record('catman_expirations', $expiration);

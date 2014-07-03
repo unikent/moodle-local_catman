@@ -49,11 +49,4 @@ if ($hassiteconfig) {
         1209600,
         PARAM_INT
     ));
-
-    $settings->add(new admin_setting_configcheckbox(
-        'local_catman/enable_hipchat',
-        'Enable HipChat Notifications',
-        'Note: Requires the local_hipchat plugin!',
-        0
-    ));
 }
