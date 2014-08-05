@@ -15,16 +15,30 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
+ * Local stuff for Moodle Catman
  *
  * @package    local_catman
- * @copyright  2014 University of Kent
+ * @copyright  2014 Skylar Kelty <S.Kelty@kent.ac.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace local_catman\nagios;
 
-$plugin->component = 'local_catman'; // Full name of the plugin (used for diagnostics).
-$plugin->version   = 2014080400;     // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2014051200;     // Requires this Moodle version.
-$plugin->cron      = 0;
+/**
+ * Checks there are no errors.
+ * Relies on local_nagios.
+ */
+class error_check extends \local_nagios\base_check
+{
+    public function execute() {
+        global $DB;
+
+        $count = $DB->count_records('catman_expirations', array(
+            'status' => 2
+        ));
+
+        if ($count > 0) {
+            $this->error("{$count} failed course purges");
+        }
+    }
+}
