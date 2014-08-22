@@ -56,10 +56,10 @@ abstract class core
         $catid = get_config("local_catman", "catid");
 
         // Try to use the category we have set if we have it set.
-        if ($catid !== false && $catid != "0") {
-            $cat = \coursecat::get($catid, IGNORE_MISSING, true);
-            if ($cat) {
-                return $cat;
+        if ($catid > 0) {
+            $category = \coursecat::get($catid, IGNORE_MISSING, true);
+            if ($category) {
+                return $category;
             }
         }
 
