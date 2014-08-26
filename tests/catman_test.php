@@ -157,4 +157,16 @@ class local_catman_tests extends \advanced_testcase
         // Check!
         $this->assertCount(0, get_enrolled_users($c1ctx));
     }
+
+    /**
+     * Test enrolment deletion observer.
+     */
+    public function test_get_category() {
+        $this->resetAfterTest();
+
+        $category = \local_catman\core::get_category();
+        $category2 = \local_catman\core::get_category();
+
+        $this->assertEquals($category->id, $category2->id);
+    }
 }
