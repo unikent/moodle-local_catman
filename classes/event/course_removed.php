@@ -21,7 +21,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Event Class
  */
-class course_purged extends \core\event\base
+class course_removed extends \core\event\base
 {
     /**
      * Init method.
@@ -38,7 +38,7 @@ class course_purged extends \core\event\base
      * @return string
      */
     public static function get_name() {
-        return "Course Purged";
+        return "Course Removed";
     }
 
     /**
@@ -47,7 +47,7 @@ class course_purged extends \core\event\base
      * @return string
      */
     public function get_description() {
-        return 'Category manager purged course ' . $this->objectid . '.';
+        return 'Category manager scheduled course ' . s($this->objectid) . ' for purge.';
     }
 
     /**
@@ -68,8 +68,8 @@ class course_purged extends \core\event\base
     protected function validate_data() {
         parent::validate_data();
 
-        if (!isset($this->other['shortname'])) {
-            throw new \coding_exception('The \'shortname\' must be set.');
+        if (!isset($this->other['expirationtime'])) {
+            throw new \coding_exception('The \'expirationtime\' must be set.');
         }
     }
 }
