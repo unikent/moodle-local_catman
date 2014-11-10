@@ -70,15 +70,28 @@ class observers
         if ($course->category === $category->id) {
             require_once($CFG->libdir . '/enrollib.php');
 
+            $coursectx = \context_course::instance($course->id);
+
             // Delete enrolments.
             enrol_course_delete($course);
 
             // Insert a record into the DB.
+            $expiration = time() + core::get_holding_period();
             $DB->insert_record("catman_expirations", array(
                 "courseid" => $course->id,
                 "deleted_date" => time(),
-                "expiration_time" => time() + core::get_holding_period()
+                "expiration_time" => $expiration
             ));
+
+            // Schedule an event.
+            $event = \local_catman\event\course_removed::create(array(
+                'objectid' => $course->id,
+                'context' => $coursectx,
+                'other' => array(
+                    'expirationtime' => $expiration
+                )
+            ));
+            $event->trigger();
         }
 
         return true;
