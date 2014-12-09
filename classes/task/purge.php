@@ -36,7 +36,7 @@ class purge extends \core\task\scheduled_task
     public function execute() {
         global $DB;
 
-        // Dont run if we are disabled.
+        // Don't run if we are disabled.
         if (!get_config("local_catman", "enable")) {
             return;
         }
@@ -54,7 +54,7 @@ class purge extends \core\task\scheduled_task
         foreach ($expirations as $expiration) {
             echo "Deleting course {$expiration->courseid}....\n";
 
-            // Set it to errored so we dont keep re-trying this if it fails badly.
+            // Set it to status 2 (error) so we don't keep re-trying this if it fails badly.
             $expiration->status = 2;
             $DB->update_record('catman_expirations', $expiration);
 
@@ -75,13 +75,13 @@ class purge extends \core\task\scheduled_task
                 delete_course($course);
 
                 $expiration->status = 1;
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $expiration->status = 2;
                 echo $e->getMessage();
             }
 
             // Does the course exist?
-            // If it does, it didnt work.
+            // If it does, it didn't work.
             if ($DB->record_exists('course', array('id' => $expiration->courseid))) {
                 $expiration->status = 2;
             }
