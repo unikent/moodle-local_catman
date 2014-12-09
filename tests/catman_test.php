@@ -53,7 +53,7 @@ class local_catman_tests extends \advanced_testcase
             "courseid" => $c2->id
         )));
 
-        // Ensure c3 wasnt.
+        // Ensure c3 wasn't.
         $this->assertFalse($DB->record_exists('catman_expirations', array(
             "courseid" => $c3->id
         )));

@@ -57,7 +57,7 @@ class observers
         // Does the course exist in the expiration table already?
         if ($DB->record_exists("catman_expirations", array("courseid" => $event->objectid))) {
             if ($course->category !== $category->id) {
-                // Delete the record from catman expirations.
+                // Delete the record from catman expiration table.
                 $DB->delete_records("catman_expirations", array(
                     "courseid" => $event->objectid
                 ));
