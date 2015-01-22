@@ -77,7 +77,7 @@ class purge extends \core\task\scheduled_task
                 $expiration->status = 1;
             } catch (\Exception $e) {
                 $expiration->status = 2;
-                echo $e->getMessage();
+                debugging($e->getMessage());
             }
 
             // Does the course exist?
