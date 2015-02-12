@@ -96,4 +96,16 @@ abstract class core
             'id' => $id
         ));
     }
+
+    /**
+     * Is this course scheduled for deletion?
+     */
+    public static function is_scheduled($course) {
+        global $DB;
+
+        return $DB->record_exists('catman_expirations', array(
+            'courseid' => $course->id,
+            'status' => '0'
+        ));
+    }
 }
