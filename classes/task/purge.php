@@ -42,9 +42,10 @@ class purge extends \core\task\scheduled_task
         }
 
         // Get a list of courses that are due to expire.
-        $sql = "SELECT * FROM {catman_expirations} WHERE expiration_time < :time AND status = 0";
+        $sql = "SELECT * FROM {catman_expirations} WHERE expiration_time < :time AND status = :status";
         $expirations = $DB->get_records_sql($sql, array(
-            "time" => time()
+            'time' => time(),
+            'status' => \local_catman\core::STATUS_SCHEDULED
         ));
 
         // Grab the removed category.
@@ -55,7 +56,7 @@ class purge extends \core\task\scheduled_task
             echo "Deleting course {$expiration->courseid}....\n";
 
             // Set it to status 2 (error) so we don't keep re-trying this if it fails badly.
-            $expiration->status = 2;
+            $expiration->status = \local_catman\core::STATUS_ERROR;
             $DB->update_record('catman_expirations', $expiration);
 
             // Grab the course.
@@ -74,20 +75,20 @@ class purge extends \core\task\scheduled_task
                 // Attempt to delete the course.
                 delete_course($course);
 
-                $expiration->status = 1;
+                $expiration->status = \local_catman\core::STATUS_COMPLETED;
             } catch (\Exception $e) {
-                $expiration->status = 2;
+                $expiration->status = \local_catman\core::STATUS_ERROR;
                 debugging($e->getMessage());
             }
 
             // Does the course exist?
             // If it does, it didn't work.
             if ($DB->record_exists('course', array('id' => $expiration->courseid))) {
-                $expiration->status = 2;
+                $expiration->status = \local_catman\core::STATUS_ERROR;
             }
 
             // Raise an event.
-            if ($expiration->status = 1) {
+            if ($expiration->status = \local_catman\core::STATUS_COMPLETED) {
                 $event = \local_catman\event\course_purged::create(array(
                     'objectid' => $expiration->courseid,
                     'context' => $coursectx,
@@ -101,4 +102,4 @@ class purge extends \core\task\scheduled_task
             $DB->update_record('catman_expirations', $expiration);
         }
     }
-} 
+}

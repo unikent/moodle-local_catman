@@ -33,6 +33,10 @@ require_once("$CFG->libdir/coursecatlib.php");
  */
 abstract class core
 {
+    const STATUS_SCHEDULED = 0;
+    const STATUS_COMPLETED = 1;
+    const STATUS_ERROR = 2;
+
     /**
      * Creates a category for the manager to use.
      */
@@ -105,7 +109,7 @@ abstract class core
 
         return $DB->record_exists('catman_expirations', array(
             'courseid' => $course->id,
-            'status' => '0'
+            'status' => static::STATUS_SCHEDULED
         ));
     }
 }
