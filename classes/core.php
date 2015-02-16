@@ -33,6 +33,10 @@ require_once("$CFG->libdir/coursecatlib.php");
  */
 abstract class core
 {
+    const STATUS_SCHEDULED = 0;
+    const STATUS_COMPLETED = 1;
+    const STATUS_ERROR = 2;
+
     /**
      * Creates a category for the manager to use.
      */
@@ -94,6 +98,37 @@ abstract class core
         // Delay the given course.
         $DB->set_field('catman_expirations', 'expiration_time', $course->expiration_time + self::get_holding_period(), array(
             'id' => $id
+        ));
+    }
+
+    /**
+     * Returns the expiration_time of a course.
+     * -1 if the course is unscheduled.
+     */
+    public static function get_expiration($course) {
+        global $DB;
+
+        $record = $DB->get_record('catman_expirations', array(
+            'courseid' => $course->id,
+            'status' => static::STATUS_SCHEDULED
+        ));
+
+        if (!$record) {
+            return -1;
+        }
+
+        return (int)$record->expiration_time;
+    }
+
+    /**
+     * Is this course scheduled for deletion?
+     */
+    public static function is_scheduled($course) {
+        global $DB;
+
+        return $DB->record_exists('catman_expirations', array(
+            'courseid' => $course->id,
+            'status' => static::STATUS_SCHEDULED
         ));
     }
 }

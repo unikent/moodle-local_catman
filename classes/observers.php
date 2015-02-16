@@ -69,11 +69,16 @@ class observers
         // Is this now in the deleted category?
         if ($course->category === $category->id) {
             require_once($CFG->libdir . '/enrollib.php');
+            require_once($CFG->dirroot . '/course/lib.php');
 
             $coursectx = \context_course::instance($course->id);
 
             // Delete enrolments.
             enrol_course_delete($course);
+
+            // Hide it.
+            $course->visible = false;
+            update_course($course);
 
             // Insert a record into the DB.
             $expiration = time() + core::get_holding_period();
