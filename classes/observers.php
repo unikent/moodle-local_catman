@@ -89,8 +89,9 @@ class observers
             ));
 
             // Schedule an event.
-            $event = \local_catman\event\course_removed::create(array(
+            $event = \local_catman\event\course_scheduled::create(array(
                 'objectid' => $course->id,
+                'courseid' => $course->id,
                 'context' => $coursectx,
                 'other' => array(
                     'expirationtime' => $expiration
