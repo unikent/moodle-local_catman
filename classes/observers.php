@@ -61,6 +61,14 @@ class observers
                 $DB->delete_records("catman_expirations", array(
                     "courseid" => $event->objectid
                 ));
+
+                // Schedule an event.
+                $event = \local_catman\event\course_unscheduled::create(array(
+                    'objectid' => $course->id,
+                    'courseid' => $course->id,
+                    'context' => \context_course::instance($course->id)
+                ));
+                $event->trigger();
             }
 
             return true;
@@ -70,8 +78,6 @@ class observers
         if ($course->category === $category->id) {
             require_once($CFG->libdir . '/enrollib.php');
             require_once($CFG->dirroot . '/course/lib.php');
-
-            $coursectx = \context_course::instance($course->id);
 
             // Delete enrolments.
             enrol_course_delete($course);
@@ -92,7 +98,7 @@ class observers
             $event = \local_catman\event\course_scheduled::create(array(
                 'objectid' => $course->id,
                 'courseid' => $course->id,
-                'context' => $coursectx,
+                'context' => \context_course::instance($course->id),
                 'other' => array(
                     'expirationtime' => $expiration
                 )
