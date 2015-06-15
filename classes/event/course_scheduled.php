@@ -21,7 +21,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Event Class
  */
-class course_removed extends \core\event\base
+class course_scheduled extends \core\event\base
 {
     /**
      * Init method.

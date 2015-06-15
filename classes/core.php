@@ -105,11 +105,11 @@ abstract class core
      * Returns the expiration_time of a course.
      * -1 if the course is unscheduled.
      */
-    public static function get_expiration($course) {
+    public static function get_expiration($courseorid) {
         global $DB;
 
         $record = $DB->get_record('catman_expirations', array(
-            'courseid' => $course->id,
+            'courseid' => is_object($courseorid) ? $courseorid->id : $courseorid,
             'status' => static::STATUS_SCHEDULED
         ));
 
@@ -123,11 +123,11 @@ abstract class core
     /**
      * Is this course scheduled for deletion?
      */
-    public static function is_scheduled($course) {
+    public static function is_scheduled($courseorid) {
         global $DB;
 
         return $DB->record_exists('catman_expirations', array(
-            'courseid' => $course->id,
+            'courseid' => is_object($courseorid) ? $courseorid->id : $courseorid,
             'status' => static::STATUS_SCHEDULED
         ));
     }
