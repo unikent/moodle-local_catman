@@ -82,10 +82,6 @@ class observers
             // Delete enrolments.
             enrol_course_delete($course);
 
-            // Hide it.
-            $course->visible = false;
-            update_course($course);
-
             // Insert a record into the DB.
             $expiration = time() + core::get_holding_period();
             $DB->insert_record("catman_expirations", array(
@@ -93,6 +89,10 @@ class observers
                 "deleted_date" => time(),
                 "expiration_time" => $expiration
             ));
+
+            // Hide it.
+            $course->visible = false;
+            update_course($course);
 
             // Schedule an event.
             $event = \local_catman\event\course_scheduled::create(array(
@@ -103,6 +103,7 @@ class observers
                     'expirationtime' => $expiration
                 )
             ));
+            $event->add_record_snapshot('course', $course);
             $event->trigger();
         }
 
