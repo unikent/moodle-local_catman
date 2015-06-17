@@ -103,6 +103,7 @@ class observers
                     'expirationtime' => $expiration
                 )
             ));
+            $event->add_record_snapshot('course', $course);
             $event->trigger();
         }
 
