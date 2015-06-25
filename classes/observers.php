@@ -50,6 +50,7 @@ class observers
         $course = $DB->get_record('course', array(
             "id" => $event->objectid
         ));
+        $context = \context_course::instance($course->id);
 
         // The ID of the deleted category is stored in config.
         $category = core::get_category();
@@ -62,11 +63,17 @@ class observers
                     "courseid" => $event->objectid
                 ));
 
+                // Remove notification.
+                $notification = \local_catman\notification\scheduled::get($course->id, $context);
+                if ($notification) {
+                    $notification->delete();
+                }
+
                 // Schedule an event.
                 $event = \local_catman\event\course_unscheduled::create(array(
                     'objectid' => $course->id,
                     'courseid' => $course->id,
-                    'context' => \context_course::instance($course->id)
+                    'context' => $context
                 ));
                 $event->trigger();
             }
@@ -94,11 +101,20 @@ class observers
             $course->visible = false;
             update_course($course);
 
+            // Create the notification.
+            \local_catman\notification\scheduled::create(array(
+                'objectid' => $course->id,
+                'context' => $context,
+                'other' => array(
+                    'expirationtime' => $expiration
+                )
+            ));
+
             // Schedule an event.
             $event = \local_catman\event\course_scheduled::create(array(
                 'objectid' => $course->id,
                 'courseid' => $course->id,
-                'context' => \context_course::instance($course->id),
+                'context' => $context,
                 'other' => array(
                     'expirationtime' => $expiration
                 )

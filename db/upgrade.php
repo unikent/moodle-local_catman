@@ -69,5 +69,22 @@ function xmldb_local_catman_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2014062700, 'local', 'catman');
     }
 
+    if ($oldversion < 2015062500) {
+        $expirations = $DB->get_records('catman_expirations');
+        foreach ($expirations as $expiration) {
+            $context = \context_course::instance($expiration->courseid);
+
+            \local_catman\notification\scheduled::create(array(
+                'objectid' => $course->id,
+                'context' => $context,
+                'other' => array(
+                    'expirationtime' => $expiration->expiration_time
+                )
+            ));
+        }
+
+        upgrade_plugin_savepoint(true, 2015062500, 'local', 'catman');
+    }
+
     return true;
 }
