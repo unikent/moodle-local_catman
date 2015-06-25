@@ -75,7 +75,7 @@ function xmldb_local_catman_upgrade($oldversion) {
             $context = \context_course::instance($expiration->courseid);
 
             \local_catman\notification\scheduled::create(array(
-                'objectid' => $course->id,
+                'objectid' => $expiration->courseid,
                 'context' => $context,
                 'other' => array(
                     'expirationtime' => $expiration->expiration_time
