@@ -43,7 +43,7 @@ class scheduled extends \local_notifications\notification\base {
     /**
      * Returns the notification.
      */
-    public function render() {
+    protected function get_contents() {
         $time = strftime("%H:%M %d/%m/%Y", $this->other['expirationtime']);
         return "This course is scheduled for deletion at $time.";
     }
@@ -51,7 +51,7 @@ class scheduled extends \local_notifications\notification\base {
     /**
      * Checks custom data.
      */
-    public function set_custom_data($data) {
+    protected function set_custom_data($data) {
         if (!isset($data['expirationtime'])) {
             throw new \moodle_exception('You must set "date"!');
         }
